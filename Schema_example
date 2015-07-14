@@ -1,0 +1,44 @@
+#Author: Michael A. Langvad Tonkel
+#Date Created: 21 March 2015
+#Date Last Modified: 21 March 2015
+#Python Version: 2.7
+#Condition: Prototype
+#Contact: matonkel@gmail.com
+
+#Description: This is a sample of code that demonsraits a work around for schema lock issues.
+
+def alpha():
+    arcpy.CreateFileGDB_management(GDB_Creation_path , GDB_Name)
+    arcpy.CreateTable_management(GDB_path , Table_Name)
+    return
+def bravo():
+    arcpy.AddField_management(Table_Name , "CityName" , "TEXT")
+    arcpy.AddField_management(Table_Name , "Lat" , "DOUBLE")
+    arcpy.AddField_management(Table_Name , "Long" , "DOUBLE")
+    return
+def charlie():
+    arcpy.Delete_management(Table_path)
+    arcpy.CreateTable_management(GDB_path , Table_Name)
+    return
+def delta():
+    arcpy.env.workspace = GDB_path
+    bravo()    
+    rows = arcpy.da.InsertCursor(Table_Name , ["CityName" , "Lat" , "Long"])
+    for k in lstlines:
+        inlist = k.split(",")
+        rows.insertRow([inlist[0] , inlist[1] , inlist[2]])
+    del rows
+    f.close()
+    arcpy.MakeXYEventLayer_management(Table_Name , "Long" , "Lat" , "TestLyr")
+    arcpy.CopyFeatures_management("TestLyr" , "MyCites")
+    print "FC created"
+    return
+ 
+gdb_exist = arcpy.Exists(GDB_path)
+
+if gdb_exist == True:
+    charlie()
+    delta()
+elif gdb_exist == False:
+    alpha()
+    delta()
