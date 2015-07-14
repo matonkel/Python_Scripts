@@ -1,3 +1,13 @@
+#Author: Michael A. Langvad Tonkel
+#Date Created: 14 Jun 2015
+#Date Last Modified: 21 March 2015
+#Python Version: 2.7
+#Condition: Prototype
+#Contact: matonkel@gmail.com
+
+#Description: This script uses an input excel file to plot and render Multi-convex Polygons that represent the known
+# territory of Bats in Brown County Indiana.
+
 import arcpy , os
 
 arcpy.env.overwriteOutput = True
