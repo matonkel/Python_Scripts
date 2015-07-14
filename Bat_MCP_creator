@@ -1,0 +1,47 @@
+import arcpy , os
+
+arcpy.env.overwriteOutput = True
+
+ws_path = arcpy.GetParameterAsText(0)
+xls = arcpy.GetParameterAsText(1)
+prj_path = arcpy.GetParameterAsText(2)
+GDB_path = arcpy.GetParameterAsText(3)
+xls_path = xls
+Table_name = "temp"
+Table_path = GDB_path + "/" + Table_name
+point_fc_name = arcpy.GetParameterAsText(4)
+sprf = arcpy.SpatialReference(prj_path)
+point_path = GDB_path + "/" + point_fc_name + ".shp"
+Coord = arcpy.GetParameterAsText(5)
+point_fc_mcp = point_fc_name + "_Mcp"
+
+arcpy.env.workspace = ws_path
+
+
+def Excel_conversion():
+    arcpy.ExcelToTable_conversion(xls_path , Table_name , "Sheet1")
+    arcpy.ConvertCoordinateNotation_management(Table_name , point_fc_name , Coord , "#" , "UTM_BANDS" , "DD_2", "" , sprf)
+    arcpy.Delete_management(Table_path)
+    print "Conversion Complete"
+    return
+def GDB_create():
+    arcpy.CreateFileGDB_management(GDB_Creation_path , GDB_Name)
+    print "GDB Created"
+    return
+def Point_del():
+    arcpy.Delete_management(point_path)
+    print "Point Feature Class Recycled"
+    return
+def Mcp():
+    point_file = GDB_path + "/" + point_fc_name
+    arcpy.MinimumBoundingGeometry_management(point_file , point_fc_mcp , "CONVEX_HULL" , "LIST" , ["Frequencies"])
+    print "Mcp's Created"
+    return
+
+
+arcpy.env.workspace = GDB_path
+Excel_conversion()
+Mcp()
+
+
+print "done"
